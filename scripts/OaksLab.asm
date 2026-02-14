@@ -775,32 +775,39 @@ OaksLabRivalText:
 
 OaksLabCharmanderPokeBallText:
 	text_asm
-	ld a, STARTER2
-	ld [wRivalStarterTemp], a
-	ld a, OAKSLAB_SQUIRTLE_POKE_BALL
+	call GetRandomStarterID ; Get a random ID for the PLAYER
+	ld [wPlayerStarter], a	; Store it for the player
+	ld h, a					; Temporarily hold it in H
+	call GetRandomStarterID ; Get a random ID for the RIVAL
+	ld [wRivalStarterTemp], a ; Store it for the Rival
+	ld a, h					; Restore player ID to a so the game knows what you picked
 	ld [wRivalStarterBallSpriteIndex], a
-	ld a, STARTER1
 	ld b, OAKSLAB_CHARMANDER_POKE_BALL
 	jr OaksLabSelectedPokeBallScript
 
 OaksLabSquirtlePokeBallText:
 	text_asm
-	ld a, STARTER3
-	ld [wRivalStarterTemp], a
-	ld a, OAKSLAB_BULBASAUR_POKE_BALL
+	call GetRandomStarterID ; Get a random ID for the PLAYER
+	ld [wPlayerStarter], a	; Store it for the player
+	ld h, a					; Temporarily hold it in H
+	call GetRandomStarterID ; Get a random ID for the RIVAL
+	ld [wRivalStarterTemp], a ; Store it for the Rival
+	ld a, h					; Restore player ID to a so the game knows what you picked
 	ld [wRivalStarterBallSpriteIndex], a
-	ld a, STARTER2
 	ld b, OAKSLAB_SQUIRTLE_POKE_BALL
 	jr OaksLabSelectedPokeBallScript
 
 OaksLabBulbasaurPokeBallText:
 	text_asm
-	ld a, STARTER1
-	ld [wRivalStarterTemp], a
-	ld a, OAKSLAB_CHARMANDER_POKE_BALL
+	call GetRandomStarterID ; Get a random ID for the PLAYER
+	ld [wPlayerStarter], a	; Store it for the player
+	ld h, a					; Temporarily hold it in H
+	call GetRandomStarterID ; Get a random ID for the RIVAL
+	ld [wRivalStarterTemp], a ; Store it for the Rival
+	ld a, h					; Restore player ID to a so the game knows what you picked
 	ld [wRivalStarterBallSpriteIndex], a
-	ld a, STARTER3
 	ld b, OAKSLAB_BULBASAUR_POKE_BALL
+	jr OaksLabSelectedPokeballScript
 
 OaksLabSelectedPokeBallScript:
 	ld [wCurPartySpecies], a
@@ -1209,3 +1216,12 @@ OaksLabScientistText:
 .Text:
 	text_far _OaksLabScientistText
 	text_end
+
+GetRandomStarterID:
+.retry:
+	call Random	; Get a random byte
+	and a		; Check if it's 0
+	jr z, .retry ; ID 0 is blank/glitch
+	cp 152		; Is it less than 152?
+	jr nc, .retry ; If 152 or higher, try again
+	ret			; Return with valid ID in Register A
