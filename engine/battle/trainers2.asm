@@ -6,6 +6,12 @@ GetTrainerInformation::
 	and a
 	jr nz, .linkBattle
 	ld a, [wTrainerClass]
+	cp RIVAL1
+	jr z, .forceRivalStarter
+	cp RIVAL2
+	jr z, .forceRivalStarter
+	cp RIVAL3
+	jr z, .forceRivalStarter
 	dec a
 	ld hl, TrainerPicAndMoneyPointers 
 	ld bc, $5
@@ -35,3 +41,10 @@ GetTrainerName::
 	farjp GetTrainerName_
 
 INCLUDE "data/trainers/pic_pointers_money.asm"
+
+.forceRivalStarter:
+	ld a, [wRivalStarter]
+	ld [wEnemyPartyMon1Species], a
+	ld [wcf91], a
+	inc hl
+	jr .continueLoop
