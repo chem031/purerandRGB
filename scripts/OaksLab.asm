@@ -1225,3 +1225,33 @@ GetRandomStarterID:
 	cp 152		; Is it less than 152?
 	jr nc, .retry ; If 152 or higher, try again
 	ret			; Return with valid ID in Register A
+
+GetRivalCounterPick:
+	ld a, [wPlayerStarter]
+	ld [wd11e], a
+	push hl
+	predef GetMonHeader
+	ld a, [wMonHType1]
+	pop hl
+	cp FIRE
+	jr z, .wantWater
+	cp WATER
+	jr z, .wantGrass
+	cp GRASS
+	jr z, .wantFire
+
+	call GetRandomStarterID
+	ret
+
+.wantWater:
+	ld a, SQUIRTLE
+	ret
+.wantGrass:
+	ld a, BULBASAUR
+	ret
+.wantFire:
+	ld a, CHARMANDER
+	ret
+	call GetPokemonType
+	ld [wRivalStarter], a
+	ret
